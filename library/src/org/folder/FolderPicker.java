@@ -19,9 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -34,7 +31,7 @@ public class FolderPicker extends Dialog implements OnItemClickListener, OnClick
 	private TextView mCurrentFolder;
 	private Folder mPath;
 	private Folder mFilePath;
-	private File mRootSDCard;
+	private File mRoot;
 	private FolderAdapter mAdapter;
 	private OnClickListener mListener;
 	private boolean mAcceptFiles;
@@ -51,7 +48,7 @@ public class FolderPicker extends Dialog implements OnItemClickListener, OnClick
 		setTitle(acceptFiles? R.string.pick_file : R.string.pick_folder);
 		setContentView(R.layout.folders);
 
-		mRootSDCard = Environment.getExternalStorageDirectory();
+		mRoot = new File("/");
 		
 		mOkButton = findViewById(R.id.ok_btn);
 		mOkButton.setOnClickListener(this);
@@ -61,14 +58,14 @@ public class FolderPicker extends Dialog implements OnItemClickListener, OnClick
 		mFolders = (ListView) findViewById(R.id.folders);
 		mFolders.setOnItemClickListener(this);
 
-		Animation animation = new AlphaAnimation(0, 1);
-		animation.setDuration(250);
-		LayoutAnimationController controller = new LayoutAnimationController(animation);
-		mFolders.setLayoutAnimation(controller);
+//		Animation animation = new AlphaAnimation(0, 1);
+//		animation.setDuration(250);
+//		LayoutAnimationController controller = new LayoutAnimationController(animation);
+//		mFolders.setLayoutAnimation(controller);
 		
 		mAdapter = new FolderAdapter();
 		mFolders.setAdapter(mAdapter);
-		mPath = new Folder(mRootSDCard.getAbsolutePath());
+		mPath = new Folder(Environment.getExternalStorageDirectory().getAbsolutePath());
 		updateAdapter();
 	}
 
@@ -93,19 +90,23 @@ public class FolderPicker extends Dialog implements OnItemClickListener, OnClick
 	private void updateAdapter() {
 		mCurrentFolder.setText(mPath.getAbsolutePath());
 		mAdapter.clear();
-		if (!mPath.equals(mRootSDCard)) {
+		if (!mPath.equals(mRoot)) {
 			mAdapter.add(new Folder(mPath, true));
 		}
 		File[] dirs = mPath.listFiles(mDirFilter);
-		Arrays.sort(dirs);
-		for (int i = 0; i < dirs.length; i++) {
-			mAdapter.add(new Folder(dirs[i]));
+		if(dirs != null) {
+			Arrays.sort(dirs);
+			for (int i = 0; i < dirs.length; i++) {
+				mAdapter.add(new Folder(dirs[i]));
+			}
 		}
 		if (mAcceptFiles) {
 			File[] files = mPath.listFiles(mFileFilter);
-			Arrays.sort(files);
-			for (int i = 0; i < files.length; i++) {
-				mAdapter.add(new Folder(files[i]));
+			if(files != null) {
+				Arrays.sort(files);
+				for (int i = 0; i < files.length; i++) {
+					mAdapter.add(new Folder(files[i]));
+				}
 			}
 		}
 		mAdapter.notifyDataSetChanged();

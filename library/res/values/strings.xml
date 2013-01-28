@@ -3,5 +3,5 @@
     <string name="hello">Hello World, FolderPickerTest!</string>
     <string name="app_name">FolderPicker</string>
 	<string name="pick_file">Pick File</string>
-	<string name="pick_folder">Pick Folder</string>
+	<string name="pick_folder">Pick Directory</string>
 </resources>
