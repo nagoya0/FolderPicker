@@ -84,8 +84,8 @@ public class FolderPicker extends Dialog implements OnItemClickListener, OnClick
 	}
 
 	public void onClick(View v) {
-		if (v == mOkButton && mListener != null) {
-			mListener.onClick(this, DialogInterface.BUTTON_POSITIVE);
+		if (mListener != null) {
+			mListener.onClick(this, v == mOkButton? DialogInterface.BUTTON_POSITIVE: DialogInterface.BUTTON_NEGATIVE);
 		}
 		dismiss();
 	}
